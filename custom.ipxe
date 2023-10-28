@@ -154,4 +154,3 @@ chain --autofree http://boot.netboot.xyz/ipxe/netboot.xyz.efi || goto boot_fail
 :exit
 chain http://boot.netboot.xyz
 exit
-
