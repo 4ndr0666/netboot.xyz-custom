@@ -1,3 +1,66 @@
+#!/bin/bash
+
+# Function to display error messages
+function error_exit {
+    echo "$1" >&2
+    exit 1
+}
+
+# Prompt the user for the destination directory
+read -p "Enter the destination directory (e.g., /dev/sde): " DEST_DIR
+
+# Check if the destination directory exists
+if [ ! -b "$DEST_DIR" ]; then
+    error_exit "Error: Destination directory $DEST_DIR does not exist or is not a block device."
+fi
+
+# Download the netboot.xyz ISO
+ISO_URL="https://boot.netboot.xyz/ipxe/netboot.xyz.iso"
+ISO_FILE="netboot.xyz.iso"
+
+echo "Downloading netboot.xyz ISO..."
+wget -O $ISO_FILE $ISO_URL || error_exit "Error: Failed to download the ISO file."
+
+# Write the ISO image to the specified destination directory
+echo "Writing the ISO image to $DEST_DIR..."
+sudo dd if=$ISO_FILE of=$DEST_DIR bs=4M status=progress || error_exit "Error: Failed to write the ISO to $DEST_DIR."
+sudo sync
+
+# Clean up the ISO file
+rm -f $ISO_FILE
+
+echo "netboot.xyz ISO has been successfully written to $DEST_DIR."
+
+# Parse endpoints from endpoints.yml
+ENDPOINTS_FILE="src/endpoints.yml"
+if [ ! -f "$ENDPOINTS_FILE" ]; then
+    error_exit "Error: $ENDPOINTS_FILE not found."
+fi
+
+ENDPOINTS=$(grep -oP 'http.*' "$ENDPOINTS_FILE")
+
+# Read each endpoint into variables
+while IFS= read -r line; do
+  case $line in
+    *systemrescue*)
+      SYSTEMRESCUE_ENDPOINT="$line"
+      ;;
+    *grml*)
+      GRML_ENDPOINT="$line"
+      ;;
+    *kodachi*)
+      KODACHI_ENDPOINT="$line"
+      ;;
+    *windows*)
+      WINDOWS_ENDPOINT="$line"
+      ;;
+  esac
+done <<< "$ENDPOINTS"
+
+# Create the custom iPXE script
+IPXE_SCRIPT="custom.ipxe"
+
+cat << EOF > $IPXE_SCRIPT
 #!ipxe
 
 # Error Handling Section
@@ -34,24 +97,24 @@ item windows                   Load Windows
 item --gap --                   Additional Options:
 item exit                      Back to Main Menu
 choose --default systemrescue --timeout 5000 option || goto exit
-goto ${option}
+goto \${option}
 
 # Boot Sections for each OS/Utility
 :systemrescue
-kernel /vmlinuz
-initrd /initrd.img
+kernel ${SYSTEMRESCUE_ENDPOINT}/vmlinuz
+initrd ${SYSTEMRESCUE_ENDPOINT}/initrd.img
 imgargs vmlinuz setkmap=us
 boot || goto boot_fail
 
 :grml
-kernel /vmlinuz
-initrd /initrd.img
+kernel ${GRML_ENDPOINT}/vmlinuz
+initrd ${GRML_ENDPOINT}/initrd.img
 imgargs vmlinuz boot=live
 boot || goto boot_fail
 
 :kodachi
-kernel /vmlinuz
-initrd /initrd.img
+kernel ${KODACHI_ENDPOINT}/vmlinuz
+initrd ${KODACHI_ENDPOINT}/initrd.img
 imgargs vmlinuz boot=live noconfig=sudo username=kodachi hostname=kodachi
 boot || goto boot_fail
 
@@ -92,9 +155,12 @@ boot || goto boot_fail
 
 :windows
 echo "Booting into Windows..."
-initrd /boot.wim
-chain /boot.wim || goto boot_fail
+initrd ${WINDOWS_ENDPOINT}/boot.wim
+chain ${WINDOWS_ENDPOINT}/boot.wim || goto boot_fail
 
 :exit
 chain http://boot.netboot.xyz
 exit
+EOF
+
+echo "Custom iPXE script has been created as $IPXE_SCRIPT."
