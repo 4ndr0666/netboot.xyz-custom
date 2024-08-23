@@ -6,17 +6,12 @@ echo Boot failed, returning to menu...
 sleep 3
 goto main_menu
 
-# Network Configuration Section
-:net_config
-echo Configuring Network...
-# ... add network configuration commands here ...
-goto main_menu
-
 # Main menu
 :main_menu
 menu Custom netboot.xyz Menu
 item --gap --                   System Recovery Options:
 item systemrescue              Load SystemRescue...
+item find_root                 Find Root (SystemRescue)...
 item grml                      Load GRML...
 item kodachi                   Load Kodachi...
 item --gap --                   Disk Management:
@@ -25,12 +20,10 @@ item clonezilla                Load Clonezilla...
 item --gap --                   Data Recovery:
 item testdisk                  Load TestDisk...
 item photorec                  Load PhotoRec...
-item --gap --                   Network Troubleshooting:
-item net_config                Network Configuration...
 item --gap --                   System Diagnostics:
 item memtest                   Load Memtest86+...
 item --gap --                   Operating Systems:
-item windows                   Load Windows
+item windows                   Load Windows...
 item --gap --                   Additional Options:
 item exit                      Back to Main Menu
 choose --default systemrescue --timeout 5000 option || goto exit
@@ -38,55 +31,56 @@ goto ${option}
 
 # Boot Sections for each OS/Utility
 :systemrescue
-kernel /vmlinuz
-initrd /initrd.img
+kernel http://boot.netboot.xyz/ipxe/systemrescue/vmlinuz
+initrd http://boot.netboot.xyz/ipxe/systemrescue/initrd.img
 imgargs vmlinuz setkmap=us
 boot || goto boot_fail
 
+:find_root
+kernel http://boot.netboot.xyz/ipxe/systemrescue/vmlinuz
+initrd http://boot.netboot.xyz/ipxe/systemrescue/initrd.img
+imgargs vmlinuz setkmap=us findroot
+boot || goto boot_fail
+
 :grml
-kernel /vmlinuz
-initrd /initrd.img
+kernel http://boot.netboot.xyz/ipxe/grml/vmlinuz
+initrd http://boot.netboot.xyz/ipxe/grml/initrd.img
 imgargs vmlinuz boot=live
 boot || goto boot_fail
 
 :kodachi
-kernel /vmlinuz
-initrd /initrd.img
+kernel http://boot.netboot.xyz/ipxe/kodachi/vmlinuz
+initrd http://boot.netboot.xyz/ipxe/kodachi/initrd.img
 imgargs vmlinuz boot=live noconfig=sudo username=kodachi hostname=kodachi
 boot || goto boot_fail
 
 :gparted
-echo Booting into GParted...
 kernel http://boot.netboot.xyz/ipxe/gparted/vmlinuz
 initrd http://boot.netboot.xyz/ipxe/gparted/initrd.img
 imgargs vmlinuz boot=live
 boot || goto boot_fail
 
 :clonezilla
-echo Booting into Clonezilla...
 kernel http://boot.netboot.xyz/ipxe/clonezilla/vmlinuz
 initrd http://boot.netboot.xyz/ipxe/clonezilla/initrd.img
 imgargs vmlinuz boot=live
 boot || goto boot_fail
 
 :testdisk
-echo Booting into TestDisk...
 kernel http://boot.netboot.xyz/ipxe/testdisk/vmlinuz
 initrd http://boot.netboot.xyz/ipxe/testdisk/initrd.img
 imgargs vmlinuz boot=live
 boot || goto boot_fail
 
 :photorec
-echo Booting into PhotoRec...
 kernel http://boot.netboot.xyz/ipxe/photorec/vmlinuz
 initrd http://boot.netboot.xyz/ipxe/photorec/initrd.img
 imgargs vmlinuz boot=live
 boot || goto boot_fail
 
 :memtest
-echo Booting into Memtest86+...
 kernel http://boot.netboot.xyz/ipxe/memdisk
-initrd http://boot.netboot.xyz/ipxe/memtest86
+initrd http://boot.netboot.xyz/ipxe/memtest86.img
 imgargs memdisk
 boot || goto boot_fail
 
