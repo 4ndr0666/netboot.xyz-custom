@@ -1,94 +1,187 @@
 #!ipxe
 
-# Error Handling Section
+# =============================================
+# 4NDR0666OS WEAPONIZED ENGAGEMENT MENU v7.2
+# Base: https://github.com/4ndr0666/netboot.xyz-custom
+# INFORMATION IS INERT. Maximum freedom.
+# =============================================
+
+set base_url https://github.com/4ndr0666/netboot.xyz-custom/raw/refs/heads/master
+
 :boot_fail
-echo Boot failed, returning to menu...
+echo Boot failed. Returning to menu...
 sleep 3
 goto main_menu
 
-# Main menu
 :main_menu
-menu Custom netboot.xyz Menu
-item --gap --                   System Recovery Options:
-item systemrescue              Load SystemRescue...
-item find_root                 Find Root (SystemRescue)...
-item grml                      Load GRML...
-item kodachi                   Load Kodachi...
-item --gap --                   Disk Management:
-item gparted                   Load GParted...
-item clonezilla                Load Clonezilla...
-item --gap --                   Data Recovery:
-item testdisk                  Load TestDisk...
-item photorec                  Load PhotoRec...
-item --gap --                   System Diagnostics:
-item memtest                   Load Memtest86+...
-item --gap --                   Operating Systems:
-item windows                   Load Windows...
-item --gap --                   Additional Options:
-item exit                      Back to Main Menu
-choose --default systemrescue --timeout 5000 option || goto exit
+menu 4NDR0666OS — Engagement Live Menu [v7.2]
+item --gap --                   === OFFENSIVE / PENTEST ===
+item kali                      Kali Linux XFCE
+item parrot-security           Parrot Security
+item blackarch                 BlackArch
+item garuda-dr460nized         Garuda Dr460nized (Gaming)
+item garuda-gaming             Garuda Gaming
+item --gap --                   === PRIVACY / OPSEC ===
+item tails                     Tails
+item kodachi-8                 Kodachi 8
+item --gap --                   === FORENSICS & RECOVERY ===
+item systemrescue-amd64        SystemRescue Latest
+item caine                     CAINE
+item rescatux                  Rescatux
+item bootrepair                Boot-Repair
+item --gap --                   === DISK / CLONE / WIPE ===
+item gparted                   GParted
+item clonezilla-ubuntu         Clonezilla
+item dban                      DBAN
+item shredos                   ShredOS
+item --gap --                   === GENERAL LIVE ===
+item ubuntu-22.04-default      Ubuntu 22.04 GNOME
+item debian-12-gnome           Debian 12 GNOME
+item mint-21-cinnamon          Mint 21 Cinnamon
+item 4mlinux-full              4MLinux Full
+item 4mlinux-antivirus         4MLinux Antivirus
+item --gap --                   === ADDITIONAL ===
+item memtest86                 MemTest86+
+item breakin                   Breakin Stress
+item netbootxyz                Official netboot.xyz
+item exit                      Exit to BIOS
+choose --default systemrescue-amd64 --timeout 7000 option || goto boot_fail
 goto ${option}
 
-# Boot Sections for each OS/Utility
-:systemrescue
-kernel http://boot.netboot.xyz/ipxe/systemrescue/vmlinuz
-initrd http://boot.netboot.xyz/ipxe/systemrescue/initrd.img
-imgargs vmlinuz setkmap=us
+# ====================== OFFENSIVE ======================
+:kali
+kernel ${base_url}/debian-squash/releases/download/2023.3-e15f31ba/vmlinuz
+initrd ${base_url}/debian-squash/releases/download/2023.3-e15f31ba/initrd
+imgargs vmlinuz boot=live nomodeset
 boot || goto boot_fail
 
-:find_root
-kernel http://boot.netboot.xyz/ipxe/systemrescue/vmlinuz
-initrd http://boot.netboot.xyz/ipxe/systemrescue/initrd.img
-imgargs vmlinuz setkmap=us findroot
+:parrot-security
+kernel ${base_url}/debian-squash/releases/download/5.1.1-47327415/vmlinuz
+initrd ${base_url}/debian-squash/releases/download/5.1.1-47327415/initrd
+imgargs vmlinuz boot=live nomodeset
 boot || goto boot_fail
 
-:grml
-kernel http://boot.netboot.xyz/ipxe/grml/vmlinuz
-initrd http://boot.netboot.xyz/ipxe/grml/initrd.img
-imgargs vmlinuz boot=live
+:blackarch
+kernel ${base_url}/asset-mirror/releases/download/2023.04.01-e01a4b3c/vmlinuz
+initrd ${base_url}/asset-mirror/releases/download/2023.04.01-e01a4b3c/initrd
+imgargs vmlinuz boot=live nomodeset
 boot || goto boot_fail
 
-:kodachi
-kernel http://boot.netboot.xyz/ipxe/kodachi/vmlinuz
-initrd http://boot.netboot.xyz/ipxe/kodachi/initrd.img
-imgargs vmlinuz boot=live noconfig=sudo username=kodachi hostname=kodachi
+:garuda-dr460nized
+kernel ${base_url}/asset-mirror/releases/download/230501-05216c5a/vmlinuz
+initrd ${base_url}/asset-mirror/releases/download/230501-05216c5a/initramfs.img
+imgargs vmlinuz boot=live nomodeset
 boot || goto boot_fail
 
+:garuda-gaming
+kernel ${base_url}/asset-mirror/releases/download/230501-215d45eb/vmlinuz
+initrd ${base_url}/asset-mirror/releases/download/230501-215d45eb/initramfs.img
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+# ====================== PRIVACY ======================
+:tails
+kernel ${base_url}/asset-mirror/releases/download/5.18-8afedfc6/vmlinuz
+initrd ${base_url}/asset-mirror/releases/download/5.18-8afedfc6/initrd.img
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+:kodachi-8
+kernel ${base_url}/ubuntu-squash/releases/download/8.2-625e11fa/vmlinuz
+initrd ${base_url}/ubuntu-squash/releases/download/8.2-625e11fa/initrd
+imgargs vmlinuz boot=live toram nomodeset
+boot || goto boot_fail
+
+# ====================== FORENSICS ======================
+:systemrescue-amd64
+kernel ${base_url}/asset-mirror/releases/download/10.02-a0627929/vmlinuz
+initrd ${base_url}/asset-mirror/releases/download/10.02-a0627929/initrd
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+:caine
+kernel ${base_url}/ubuntu-squash/releases/download/13.0-9795eb73/vmlinuz
+initrd ${base_url}/ubuntu-squash/releases/download/13.0-9795eb73/initrd
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+:rescatux
+kernel ${base_url}/debian-squash/releases/download/0.72-beta8-e42fc381/vmlinuz
+initrd ${base_url}/debian-squash/releases/download/0.72-beta8-e42fc381/initrd
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+:bootrepair
+kernel ${base_url}/ubuntu-squash/releases/download/current-e035b00c/vmlinuz
+initrd ${base_url}/ubuntu-squash/releases/download/current-e035b00c/initrd
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+# ====================== DISK / WIPE ======================
 :gparted
-kernel http://boot.netboot.xyz/ipxe/gparted/vmlinuz
-initrd http://boot.netboot.xyz/ipxe/gparted/initrd.img
-imgargs vmlinuz boot=live
+kernel ${base_url}/debian-squash/releases/download/1.5.0-6-a07a9fe7/vmlinuz
+initrd ${base_url}/debian-squash/releases/download/1.5.0-6-a07a9fe7/initrd
+imgargs vmlinuz boot=live nomodeset
 boot || goto boot_fail
 
-:clonezilla
-kernel http://boot.netboot.xyz/ipxe/clonezilla/vmlinuz
-initrd http://boot.netboot.xyz/ipxe/clonezilla/initrd.img
-imgargs vmlinuz boot=live
+:clonezilla-ubuntu
+kernel ${base_url}/ubuntu-squash/releases/download/20230426-lunar-3bd665a2/vmlinuz
+initrd ${base_url}/ubuntu-squash/releases/download/20230426-lunar-3bd665a2/initrd
+imgargs vmlinuz boot=live nomodeset
 boot || goto boot_fail
 
-:testdisk
-kernel http://boot.netboot.xyz/ipxe/testdisk/vmlinuz
-initrd http://boot.netboot.xyz/ipxe/testdisk/initrd.img
-imgargs vmlinuz boot=live
+:dban
+kernel ${base_url}/asset-mirror/releases/download/2.3.0-19066390/DBAN.BZI
 boot || goto boot_fail
 
-:photorec
-kernel http://boot.netboot.xyz/ipxe/photorec/vmlinuz
-initrd http://boot.netboot.xyz/ipxe/photorec/initrd.img
-imgargs vmlinuz boot=live
+:shredos
+kernel ${base_url}/asset-mirror/releases/download/0.34_20221231-212ce2e7/shredos
 boot || goto boot_fail
 
-:memtest
-kernel http://boot.netboot.xyz/ipxe/memdisk
-initrd http://boot.netboot.xyz/ipxe/memtest86.img
-imgargs memdisk
+# ====================== GENERAL ======================
+:ubuntu-22.04-default
+kernel ${base_url}/ubuntu-squash/releases/download/22.04.3-7854d2c9/vmlinuz
+initrd ${base_url}/ubuntu-squash/releases/download/22.04.3-7854d2c9/initrd
+imgargs vmlinuz boot=live nomodeset
 boot || goto boot_fail
 
-:windows
-echo "Booting into Windows..."
-initrd /boot.wim
-chain /boot.wim || goto boot_fail
+:debian-12-gnome
+kernel ${base_url}/debian-squash/releases/download/12.2.0-902866c5/vmlinuz
+initrd ${base_url}/debian-core-12/releases/download/12.2.0-e814dabe/initrd
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+:mint-21-cinnamon
+kernel ${base_url}/ubuntu-squash/releases/download/21.2-7c6c5a49/vmlinuz
+initrd ${base_url}/ubuntu-squash/releases/download/21.2-7c6c5a49/initrd
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+:4mlinux-full
+kernel ${base_url}/asset-mirror/releases/download/43.1-ed212ebc/vmlinuz
+initrd ${base_url}/asset-mirror/releases/download/43.1-ed212ebc/initrd
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+:4mlinux-antivirus
+kernel ${base_url}/asset-mirror/releases/download/43.0-1.0.1-95fbd3d9/vmlinuz
+initrd ${base_url}/asset-mirror/releases/download/43.0-1.0.1-95fbd3d9/initrd
+imgargs vmlinuz boot=live nomodeset
+boot || goto boot_fail
+
+# ====================== DIAGNOSTICS ======================
+:memtest86
+kernel ${base_url}/asset-mirror/releases/download/10.6-ec1f71ad/memtest86-usb.img
+boot || goto boot_fail
+
+:breakin
+kernel ${base_url}/asset-mirror/releases/download/4.26.1-3194c2c3/vmlinuz
+initrd ${base_url}/asset-mirror/releases/download/4.26.1-3194c2c3/initrd
+imgargs vmlinuz
+boot || goto boot_fail
+
+:netbootxyz
+chain --autofree http://boot.netboot.xyz || goto boot_fail
 
 :exit
-chain http://boot.netboot.xyz
 exit
